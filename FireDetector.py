@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 '''
     화재 감지 클래스
@@ -9,10 +10,10 @@ import cv2
 '''
 class FireDetector:
     def __init__(self, camera, ai_analyzer, duration, threshold):
-        self.camera = camera
-        self.aiAnalyzer = ai_analyzer
-        self.fireDetectedDuration = duration
-        self.fireDetectedThreshold = threshold
+        self.__camera = camera
+        self.__aiAnalyzer = ai_analyzer
+        self.__fireDetectedDuration = duration
+        self.__fireDetectedThreshold = threshold
 
     def analyzeColorPattern(self, frame):
         # 이미지 색 공간 변환
@@ -22,6 +23,12 @@ class FireDetector:
             # dst: 출력 이미지(선택, src와 동일한 크기)
             # dstCn: 출력 이미지의 채널 수 지정(0 -> code 채널 수로 지정)
         frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+        # Duration에 아무것도 없다면 초기 프레임 추가 -> 메서드 종료
+        if len(self.__fireDetectedDuration) == 0:
+            self.__fireDetectedDuration.append(frame_hsv)
+            return False
+
         # 특정 색상 영역 추출
         # cv2.inRange(src, lowerb, upperb, dst) -> dst
             # src: 추출할 이미지
@@ -29,7 +36,31 @@ class FireDetector:
             # upperb: 영역 중 가장 최대 배열 or 스칼라
             # dst: 출력 이진 이미지(선택, src와 CV_8U(8비트 부호없는 정수) 유형과 동일한 크기)
         # 빨간색 H: 약 160 ~ 179 / 0 ~ 10, 주황색~노랑색 H: 약 10 ~ 25
-        mask1 = cv2.inRange(frame_hsv, (0, 50, 50), (25, 255, 255))
-        mask2 = cv2.inRange(frame_hsv, (160, 50, 50), (179, 255, 255))
+        mask1 = cv2.inRange(frame_hsv, (0, 100, 150), (25, 255, 255))
+        mask2 = cv2.inRange(frame_hsv, (160, 100, 150), (179, 255, 255))
         mask = mask1 | mask2
-        return mask
+
+        # 이전 frame V값 추출
+        pre_frame_v = self.__fireDetectedDuration[len(self.__fireDetectedDuration) - 1][:, :, 2]
+        # 현재 frame V값 추출
+        frame_v = frame_hsv[:, :, 2]
+
+        # 마스킹된 부분의 이전 frame V값 평균
+        pre_mean_v =  np.mean(pre_frame_v[mask > 0])
+        # 마스킹된 부분의 현재 frame V값 평균
+        mean_v = np.mean(frame_v[mask > 0])
+
+        # 이전frame과 현재 frame V값 평균 차이 계산
+        diff = abs(pre_mean_v - mean_v)
+
+        # 이전frame과 현재 frame V값의 차이가 10이상 이라면 불로 감지
+        if diff >= 10:
+            self.__fireDetectedDuration.append(frame_hsv)
+        else:
+            self.__fireDetectedDuration.clear()
+
+        # 불을 감지한 프레임이 임계치를 넘을 경우 true 반환 아니라면 false 반환
+        if len(self.__fireDetectedDuration) >= self.__fireDetectedThreshold:
+            return True
+        else:
+            return False
