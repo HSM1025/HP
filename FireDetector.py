@@ -15,12 +15,12 @@ class FireDetector:
         self.__fireDetectedDuration = duration
         self.__fireDetectedThreshold = threshold
 
-    def analyzeColorPattern(self, frame):
+    def analyze_color_pattern(self, frame):
         # 이미지 색 공간 변환
-        # cv2.cvtColor(src, code, dst, dstCn=0) -> dst
+        # cv2.cvtColor(src, code, dst=None, dstCn=0) -> dst
             # src: 변환할 이미지
             # code: 변환하려는 색 공간 지정(flag) ex) cv2.COLOR_BGR2GRAY
-            # dst: 출력 이미지(선택, src와 동일한 크기)
+            # dst: 출력 이미지(src와 동일한 크기)
             # dstCn: 출력 이미지의 채널 수 지정(0 -> code 채널 수로 지정)
         frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
@@ -30,11 +30,11 @@ class FireDetector:
             return False
 
         # 특정 색상 영역 추출
-        # cv2.inRange(src, lowerb, upperb, dst) -> dst
+        # cv2.inRange(src, lowerb, upperb, dst=None) -> dst
             # src: 추출할 이미지
             # lowerb: 영역 중 가장 최소 배열 or 스칼라
             # upperb: 영역 중 가장 최대 배열 or 스칼라
-            # dst: 출력 이진 이미지(선택, src와 CV_8U(8비트 부호없는 정수) 유형과 동일한 크기)
+            # dst: 출력 이진 이미지(src와 CV_8U(8비트 부호없는 정수) 유형과 동일한 크기)
         # 빨간색 H: 약 160 ~ 179 / 0 ~ 10, 주황색~노랑색 H: 약 10 ~ 25
         mask1 = cv2.inRange(frame_hsv, (0, 100, 150), (25, 255, 255))
         mask2 = cv2.inRange(frame_hsv, (160, 100, 150), (179, 255, 255))
@@ -45,16 +45,21 @@ class FireDetector:
         # 현재 frame V값 추출
         frame_v = frame_hsv[:, :, 2]
 
-        # 마스킹된 부분의 이전 frame V값 평균
-        pre_mean_v =  np.mean(pre_frame_v[mask > 0])
-        # 마스킹된 부분의 현재 frame V값 평균
-        mean_v = np.mean(frame_v[mask > 0])
+        # 마스킹된 부분의 이전 frame V값 표준편차
+        pre_std_v =  np.std(pre_frame_v[mask > 0])
+        # 마스킹된 부분의 현재 frame V값 표준편차
+        std_v = np.std(frame_v[mask > 0])
 
-        # 이전frame과 현재 frame V값 평균 차이 계산
-        diff = abs(pre_mean_v - mean_v)
+        # 이전frame과 현재 frame V값 표준편차 차이 계산
+        diff = abs(pre_std_v - std_v)
+        print('diff= ' + str(float(diff)))
 
-        # 이전frame과 현재 frame V값의 차이가 10이상 이라면 불로 감지
-        if diff >= 10:
+        # 밝은 픽셀 비율(마스크된 V값 중 200(밝음) 이상 / 마스크된 V값) 계산
+        ratio = np.sum(frame_v[mask > 0] > 200) / frame_v[mask > 0].size
+        print('ratio= ' + str(float(ratio)))
+
+        # 이전frame과 현재 frame V값의 차이가 5이상이고 밝은 픽셀 비율이 0.03이상일 경우 불로 감지
+        if diff >= 5 and ratio >= 0.03:
             self.__fireDetectedDuration.append(frame_hsv)
         else:
             self.__fireDetectedDuration.clear()
