@@ -18,6 +18,9 @@ class Camera:
     def __del__(self):
         self.__cap.release()
 
+    def get_location(self):
+        return self.__location
+
     def capture_frame(self):
         # VideoCapture open 여부 확인
         # cv2.VideoCapture.isOpened() -> return

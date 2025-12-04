@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from Event import Event
 
 '''
     화재 감지 클래스
@@ -69,3 +70,6 @@ class FireDetector:
             return True
         else:
             return False
+
+    def create_fire_event(self, type, location):
+        return Event(type, location)
