@@ -1,4 +1,5 @@
 import cv2
+from Event import Event
 
 class IntrusionDetector:
     def __init__(self, camera):
@@ -24,5 +25,7 @@ class IntrusionDetector:
         for cnt in contours:
             if cv2.contourArea(cnt) >= 300:  # 일정 크기 이상 움직임이면 True
                 return True
-
         return False  # 아무것도 없으면 False
+
+    def create_intrusion_event(self,type,loaction):
+        return Event(self,type,loaction)
