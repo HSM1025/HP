@@ -37,16 +37,12 @@ class FireDetector:
                     finish = True # 영상 종료 여부 true
                     break
 
-                mask = self.analyze_color_pattern(i, frame)
-                # if self.analyze_color_pattern(i, frame):
-                #     if self.__aiAnalyzer.analyze(frame, "FIRE"):
-                #         detected[i] = True # 해당 카메라 화재 감지 여부 true
-                #         # Fire 이벤트 생성
-                #         self.create_fire_event("FIRE", camera[i].get_location())
+                if self.analyze_color_pattern(i, frame):
+                    if self.__aiAnalyzer.analyze(frame, "FIRE"):
+                        detected[i] = True # 해당 카메라 화재 감지 여부 true
+                        # Fire 이벤트 생성
+                        self.create_fire_event("FIRE", camera[i].get_location())
 
-                cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
-                cv2.resizeWindow("Frame", 1133, 640)
-                cv2.imshow("Frame", mask)
             if finish: # 영상 종료 시 감지 종료
                 break
 
