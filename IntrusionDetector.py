@@ -53,27 +53,27 @@ class IntrusionDetector:
                     if idx==0 and self.callcount0==0:
                         aianalyze = ai_analyzer.analyze(frame,"Intrusion")
                         if aianalyze:
-                            createIntrusionEvent("Intrusion", "camera1")
+                            create_Intrusion_Event("Intrusion", "camera1")
                             self.callcount0 += 1
 
                     elif idx==1 and self.callcount1==0:
                         aianalyze = ai_analyzer.analyze(frame, "Intrusion")
                         if aianalyze:
-                            createIntrusionEvent("Intrusion", "camera2")
+                            create_Intrusion_Event("Intrusion", "camera2")
                             self.callcount1 += 1
 
                     elif idx==2 and self.callcount2==0:
                         aianalyze = ai_analyzer.analyze(frame, "Intrusion")
                         if aianalyze:
-                            createIntrusionEvent("Intrusion", "camera3")
+                            create_Intrusion_Event("Intrusion", "camera3")
                             self.callcount2 += 1
 
             if cv2.waitKey(17) == 27:
                 break
 
         cv2.destroyAllWindows()
-    def createIntrusionEvent(self,type,loaction):
-        Event(type,loaction)
+    def create_Intrusion_Event(self,type,location):
+        EventManager.instance().add_event(Event(type, location))
 
     def detect_motion(self, idx, frame):
         fgmask = self.fgbg_list[idx].apply(frame)
