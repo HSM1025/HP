@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 
-def extract_fire_roi_and_pad(image_cv, target_size=(128, 128)):
+def extract_fire_roi_and_pad(image_cv, target_size=(256, 256)):
     """
     이미지에서 불 색상 영역을 찾아 ROI를 추출하고,
     비율을 유지한 채 검은 배경(Padding)을 추가하여 리사이징하는 함수
@@ -20,9 +20,9 @@ def extract_fire_roi_and_pad(image_cv, target_size=(128, 128)):
         return preprocess_padding(image_cv, target_size)
 
     # 화재 색상 범위 정의
-    lower_fire1 = np.array([0, 100, 100])
+    lower_fire1 = np.array([0, 150, 180])
     upper_fire1 = np.array([30, 255, 255])
-    lower_fire2 = np.array([160, 100, 100])
+    lower_fire2 = np.array([160, 150, 180])
     upper_fire2 = np.array([179, 255, 255])
 
     mask1 = cv2.inRange(hsv, lower_fire1, upper_fire1)
@@ -44,7 +44,7 @@ def extract_fire_roi_and_pad(image_cv, target_size=(128, 128)):
         return preprocess_padding(image_cv, target_size)
 
     # 너무 작은 노이즈 무시
-    if w < 10 or h < 10:
+    if w < 15 or h < 15:
         return preprocess_padding(image_cv, target_size)
 
     # ROI 잘라내기 (이미지 범위를 벗어나지 않게 클램핑)

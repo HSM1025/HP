@@ -9,7 +9,7 @@ from IntrusionPreprocessing import extract_intruder_roi_and_pad
 
 
 class AIAnalyzer:
-    def __init__(self, confidence_threshold=0.5):
+    def __init__(self, confidence_threshold=0.75):
         """
         초기화: 화재 및 침입자 감지용 AI 모델을 로드합니다.
         """
