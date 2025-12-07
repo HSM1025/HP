@@ -38,14 +38,10 @@ class FireDetector:
                     break
 
                 if self.analyze_color_pattern(i, frame):
-                    if self.__aiAnalyzer.analyze(frame, "Fire"):
+                    if self.__aiAnalyzer.analyze(frame, "FIRE"):
                         detected[i] = True # 해당 카메라 화재 감지 여부 true
                         # Fire 이벤트 생성
-                        self.create_fire_event("Fire", camera[i].get_location())
-
-                cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
-                cv2.resizeWindow("Frame", 1133, 640)
-                cv2.imshow("Frame", frame)
+                        self.create_fire_event("FIRE", camera[i].get_location())
 
             if finish: # 영상 종료 시 감지 종료
                 break
@@ -87,8 +83,6 @@ class FireDetector:
         mask = (color_mask == 255) & (diff < 20)
         color_mask[mask] = 0
 
-        # return color_mask
-
         # 전체 frame 크기 연산
         h_img, w_img = frame.shape[:2]
         frame_area = h_img * w_img
@@ -98,7 +92,6 @@ class FireDetector:
 
         # mask된 frame의 비율 연산
         fire_ratio = fire_area / frame_area
-        print('fire_ratio= ' + str(float(fire_ratio)))
 
         # 전체 frame 중 0.01%가 mask되어있을 경우 불 의심
         if fire_ratio >= 0.0001:
