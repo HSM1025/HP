@@ -51,19 +51,19 @@ class IntrusionDetector:
                     # 모션이 찾아진 카메라 배열
                     self.intrusion_flags[idx] = True
                     if idx==0 and self.callcount0==0:
-                        aianalyze = __aianalyzer.analyze(frame,"Intrusion")
+                        aianalyze = __aianalyzer.analyze(frame,"INTRUDER")
                         if aianalyze:
                             create_Intrusion_Event("Intrusion", "camera1")
                             self.callcount0 += 1
 
                     elif idx==1 and self.callcount1==0:
-                        aianalyze = __aianalyzer.analyze(frame, "Intrusion")
+                        aianalyze = __aianalyzer.analyze(frame, "INTRUDER")
                         if aianalyze:
                             create_Intrusion_Event("Intrusion", "camera2")
                             self.callcount1 += 1
 
                     elif idx==2 and self.callcount2==0:
-                        aianalyze = __aianalyzer.analyze(frame, "Intrusion")
+                        aianalyze = __aianalyzer.analyze(frame, "INTRUDER")
                         if aianalyze:
                             create_Intrusion_Event("Intrusion", "camera3")
                             self.callcount2 += 1
