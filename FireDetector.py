@@ -79,8 +79,8 @@ class FireDetector:
             # dst: src1 - src2한 이미지
         diff = cv2.absdiff(self.__fireDetectedDuration[camera_index][-1], gray)
 
-        # 불 색깔이고 픽셀의 변화가 20 이상인 경우의 마스크
-        mask = (color_mask == 255) & (diff >= 20)
+        # 불 색깔이고 픽셀의 변화가 5 이상인 경우의 마스크
+        mask = (color_mask == 255) & (diff < 5)
         color_mask[mask] = 0
 
         # 전체 frame 크기 연산
