@@ -4,7 +4,7 @@ from FireDetector import FireDetector
 from EventManager import EventManager
 
 camera = Camera('dummy.mp4')
-fireDetector = FireDetector(camera, None, [], 10)
+fireDetector = FireDetector(camera, None, [], 30)
 while True:
     frame = camera.capture_frame()
     eventManager = EventManager()
