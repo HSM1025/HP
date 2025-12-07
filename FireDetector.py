@@ -1,5 +1,5 @@
 import cv2
-from cv2 import bitwise_or
+from cv2 import bitwise_or, imshow
 import numpy as np
 
 from EventManager import EventManager
@@ -37,12 +37,16 @@ class FireDetector:
                     finish = True # 영상 종료 여부 true
                     break
 
-                if self.analyze_color_pattern(i, frame):
-                    if self.__aiAnalyzer.analyze(frame, "FIRE"):
-                        detected[i] = True # 해당 카메라 화재 감지 여부 true
-                        # Fire 이벤트 생성
-                        self.create_fire_event("FIRE", camera[i].get_location())
+                mask = self.analyze_color_pattern(i, frame)
+                # if self.analyze_color_pattern(i, frame):
+                #     if self.__aiAnalyzer.analyze(frame, "FIRE"):
+                #         detected[i] = True # 해당 카메라 화재 감지 여부 true
+                #         # Fire 이벤트 생성
+                #         self.create_fire_event("FIRE", camera[i].get_location())
 
+                cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
+                cv2.resizeWindow("Frame", 1133, 640)
+                cv2.imshow("Frame", mask)
             if finish: # 영상 종료 시 감지 종료
                 break
 
@@ -80,7 +84,7 @@ class FireDetector:
         diff = cv2.absdiff(self.__fireDetectedDuration[camera_index][-1], gray)
 
         # 불 색깔이고 픽셀의 변화가 20 이상인 경우의 마스크
-        mask = (color_mask == 255) & (diff < 20)
+        mask = (color_mask == 255) & (diff >= 20)
         color_mask[mask] = 0
 
         # 전체 frame 크기 연산
@@ -92,12 +96,13 @@ class FireDetector:
 
         # mask된 frame의 비율 연산
         fire_ratio = fire_area / frame_area
+        print(fire_ratio)
 
         # 전체 frame 중 0.01%가 mask되어있을 경우 불 의심
         if fire_ratio >= 0.0001:
             self.__fireDetectedDuration[camera_index].append(gray)
         else:
-            self.__fireDetectedDuration[camera_index].clear()
+            self.__fireDetectedDuration[camera_index].pop(0)
 
         # 불을 의심한 프레임이 임계치를 넘을 경우 true 반환 아니라면 false 반환
         if len(self.__fireDetectedDuration[camera_index]) >= self.__fireDetectedThreshold + 1:
