@@ -6,7 +6,7 @@ class IntrusionDetector:
         self.cameras = cameras  # 카메라 리스트
         self.motion_caps = [[] for _ in cameras]  # 각 카메라별 motion_cap
         self.intrusion_flags = [False] * len(cameras)  # 각 카메라별 결과 플래그
-        self.__aianalyzer = ai_analyzer
+        self.__aiAnalyzer = ai_analyzer
         self.callcount0 = 0
         self.callcount1 = 0
         self.callcount2 = 0
@@ -51,20 +51,20 @@ class IntrusionDetector:
                     # 모션이 찾아진 카메라 배열
                     self.intrusion_flags[idx] = True
                     if idx==0 and self.callcount0==0:
-                        aianalyze = __aianalyzer.analyze(frame,"INTRUDER")
-                        if aianalyze:
+                        analyze = __aiAnalyzer.analyze(frame,"INTRUDER")
+                        if analyze:
                             create_Intrusion_Event("Intrusion", "camera1")
                             self.callcount0 += 1
 
                     elif idx==1 and self.callcount1==0:
-                        aianalyze = __aianalyzer.analyze(frame, "INTRUDER")
-                        if aianalyze:
+                        analyze = __aiAnalyzer.analyze(frame, "INTRUDER")
+                        if analyze:
                             create_Intrusion_Event("Intrusion", "camera2")
                             self.callcount1 += 1
 
                     elif idx==2 and self.callcount2==0:
-                        aianalyze = __aianalyzer.analyze(frame, "INTRUDER")
-                        if aianalyze:
+                        analyze = __aiAnalyzer.analyze(frame, "INTRUDER")
+                        if analyze:
                             create_Intrusion_Event("Intrusion", "camera3")
                             self.callcount2 += 1
 
