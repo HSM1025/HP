@@ -1,5 +1,6 @@
 import cv2
 from Event import Event
+from EventManager import EventManager
 
 class IntrusionDetector:
     def __init__(self, cameras: list ,ai_analyzer):
