@@ -68,8 +68,6 @@ class IntrusionDetector:
                             createIntrusionEvent("Intrusion", "camera3")
                             self.callcount2 += 1
 
-                cv2.imshow(f"Camera {idx}", frame)
-
             if cv2.waitKey(17) == 27:
                 break
 
