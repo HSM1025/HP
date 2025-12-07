@@ -53,19 +53,19 @@ class IntrusionDetector:
                     if idx==0 and self.callcount0==0:
                         analyze = self.__aiAnalyzer.analyze(frame,"INTRUDER")
                         if analyze:
-                            create_Intrusion_Event("Intrusion", "camera1")
+                            self.create_Intrusion_Event("Intrusion", "camera1")
                             self.callcount0 += 1
 
                     elif idx==1 and self.callcount1==0:
                         analyze = self.__aiAnalyzer.analyze(frame, "INTRUDER")
                         if analyze:
-                            create_Intrusion_Event("Intrusion", "camera2")
+                            self.create_Intrusion_Event("Intrusion", "camera2")
                             self.callcount1 += 1
 
                     elif idx==2 and self.callcount2==0:
                         analyze = self.__aiAnalyzer.analyze(frame, "INTRUDER")
                         if analyze:
-                            create_Intrusion_Event("Intrusion", "camera3")
+                            self.create_Intrusion_Event("Intrusion", "camera3")
                             self.callcount2 += 1
 
             if cv2.waitKey(17) == 27:
