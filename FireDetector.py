@@ -2,6 +2,7 @@ import cv2
 from cv2 import bitwise_or
 import numpy as np
 
+from EventManager import EventManager
 from Event import Event
 
 '''
@@ -37,8 +38,10 @@ class FireDetector:
                     break
 
                 if self.analyze_color_pattern(i, frame):
-                    print(str(i) + " Fire Detected")
-                    detected[i] = True # 해당 카메라 화재 감지 여부 true
+                    if self.__aiAnalyzer.analyze(frame, "Fire"):
+                        detected[i] = True # 해당 카메라 화재 감지 여부 true
+                        # Fire 이벤트 생성
+                        self.create_fire_event("Fire", camera[i].get_location())
 
                 cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
                 cv2.resizeWindow("Frame", 1133, 640)
@@ -110,4 +113,4 @@ class FireDetector:
             return False
 
     def create_fire_event(self, type, location):
-        return Event(type, location)
+        EventManager.instance().add_event(Event(type, location))
